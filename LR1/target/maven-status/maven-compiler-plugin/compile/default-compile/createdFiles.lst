@@ -1,0 +1,4 @@
+com\example\library\web\BookListServlet.class
+com\example\library\entity\Book.class
+com\example\library\entity\Author.class
+com\example\library\ejb\BookService.class
