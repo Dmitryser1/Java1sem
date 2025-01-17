@@ -4,17 +4,27 @@ import jakarta.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name = "audit_events")
-public class AuditEvent {
+@Table(name = "audit_log")
+public class AuditLog {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String entityType; // Тип сущности (например, "Author" или "Book")
-    private Long entityId;     // ID сущности
-    private String action;     // Действие (CREATE, UPDATE, DELETE)
-    private String changedBy;  // Кто изменил (например, "admin")
-    private Date changedAt;    // Когда изменено
+    @Column(name = "entity_type", nullable = false)
+    private String entityType;
+
+    @Column(name = "entity_id", nullable = false)
+    private Long entityId;
+
+    @Column(nullable = false)
+    private String action;
+
+    @Column(name = "changed_by", nullable = false)
+    private String changedBy;
+
+    @Column(name = "changed_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date changedAt;
 
     // Геттеры и сеттеры
     public Long getId() {

@@ -4,7 +4,7 @@ import com.example.library.audit.service.AuditService;
 import com.example.library.mappers.AuthorMapper;
 import com.example.library.model.Author;
 import com.example.library.model.AuthorDTO;
-import com.example.library.notification.service.NotificationService;
+import com.example.library.notification.service.EmailService;
 import com.example.library.repository.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class AuthorService {
     private AuditService auditService;
 
     @Autowired
-    private NotificationService notificationService;
+    private EmailService emailService;
 
     public List<AuthorDTO> getAllAuthors() {
         return authorRepository.findAll().stream()
@@ -43,8 +43,17 @@ public class AuthorService {
     public AuthorDTO createAuthor(AuthorDTO authorDTO) {
         Author author = authorMapper.toEntity(authorDTO);
         Author savedAuthor = authorRepository.save(author);
-        auditService.logEvent("Author", savedAuthor.getId(), ChangeType.CREATE, "admin");
-        notificationService.sendNotification("Author created: " + savedAuthor.getFullName(), "admin@library.com");
+
+        // Логирование события
+        auditService.logEvent("Author", savedAuthor.getId(), "CREATE", "admin");
+
+        // Отправка email
+        emailService.sendEmail(
+                "dmitryserafimovich@gmail.com",
+                "New Author Created",
+                "Author " + savedAuthor.getFullName() + " has been created."
+        );
+
         return authorMapper.toDTO(savedAuthor);
     }
 
@@ -58,8 +67,17 @@ public class AuthorService {
         author.setNationality(authorDTO.getNationality());
 
         Author updatedAuthor = authorRepository.save(author);
-        auditService.logEvent("Author", updatedAuthor.getId(), ChangeType.UPDATE, "admin");
-        notificationService.sendNotification("Author updated: " + updatedAuthor.getFullName(), "admin@library.com");
+
+        // Логирование события
+        auditService.logEvent("Author", updatedAuthor.getId(), "UPDATE", "admin");
+
+        // Отправка email
+        emailService.sendEmail(
+                "dmitryserafimovich@gmail.com",
+                "Author Updated",
+                "Author " + updatedAuthor.getFullName() + " has been updated."
+        );
+
         return authorMapper.toDTO(updatedAuthor);
     }
 
@@ -67,7 +85,15 @@ public class AuthorService {
         Author author = authorRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Author not found"));
         authorRepository.delete(author);
-        auditService.logEvent("Author", id, ChangeType.DELETE, "admin");
-        notificationService.sendNotification("Author deleted: " + author.getFullName(), "admin@library.com");
+
+        // Логирование события
+        auditService.logEvent("Author", id, "DELETE", "admin");
+
+        // Отправка email
+        emailService.sendEmail(
+                "dmitryserafimovich@gmail.com",
+                "Author Deleted",
+                "Author " + author.getFullName() + " has been deleted."
+        );
     }
 }

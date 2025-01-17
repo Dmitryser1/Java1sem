@@ -4,7 +4,7 @@ import com.example.library.audit.service.AuditService;
 import com.example.library.mappers.BookMapper;
 import com.example.library.model.Book;
 import com.example.library.model.BookDTO;
-import com.example.library.notification.service.NotificationService;
+import com.example.library.notification.service.EmailService;
 import com.example.library.repository.BookRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,7 +26,7 @@ public class BookService {
     private AuditService auditService;
 
     @Autowired
-    private NotificationService notificationService;
+    private EmailService emailService;
 
     public List<BookDTO> getAllBooks() {
         return bookRepository.findAll().stream()
@@ -43,8 +43,17 @@ public class BookService {
     public BookDTO createBook(BookDTO bookDTO) {
         Book book = bookMapper.toEntity(bookDTO);
         Book savedBook = bookRepository.save(book);
-        auditService.logEvent("Book", savedBook.getId(), ChangeType.CREATE, "admin");
-        notificationService.sendNotification("Book created: " + savedBook.getTitle(), "admin@library.com");
+
+        // Логирование события
+        auditService.logEvent("Book", savedBook.getId(), "CREATE", "admin");
+
+        // Отправка email
+        emailService.sendEmail(
+                "dmitryserafimovich@gmail.com",
+                "New Book Created",
+                "Book " + savedBook.getTitle() + " has been created."
+        );
+
         return bookMapper.toDTO(savedBook);
     }
 
@@ -58,8 +67,17 @@ public class BookService {
         book.setAvailableCopies(bookDTO.getAvailableCopies());
 
         Book updatedBook = bookRepository.save(book);
-        auditService.logEvent("Book", updatedBook.getId(), ChangeType.UPDATE, "admin");
-        notificationService.sendNotification("Book updated: " + updatedBook.getTitle(), "admin@library.com");
+
+        // Логирование события
+        auditService.logEvent("Book", updatedBook.getId(), "UPDATE", "admin");
+
+        // Отправка email
+        emailService.sendEmail(
+                "dmitryserafimovich@gmail.com",
+                "Book Updated",
+                "Book " + updatedBook.getTitle() + " has been updated."
+        );
+
         return bookMapper.toDTO(updatedBook);
     }
 
@@ -67,7 +85,15 @@ public class BookService {
         Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Book not found"));
         bookRepository.delete(book);
-        auditService.logEvent("Book", id, ChangeType.DELETE, "admin");
-        notificationService.sendNotification("Book deleted: " + book.getTitle(), "admin@library.com");
+
+        // Логирование события
+        auditService.logEvent("Book", id, "DELETE", "admin");
+
+        // Отправка email
+        emailService.sendEmail(
+                "dmitryserafimovich@gmail.com",
+                "Book Deleted",
+                "Book " + book.getTitle() + " has been deleted."
+        );
     }
 }
