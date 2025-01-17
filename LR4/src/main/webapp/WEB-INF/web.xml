@@ -6,15 +6,18 @@
 
     <display-name>Library REST API</display-name>
 
+    <!-- Загрузка applicationContext.xml -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>/WEB-INF/applicationContext.xml</param-value>
     </context-param>
 
+    <!-- Слушатель для загрузки Spring Context -->
     <listener>
         <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
     </listener>
 
+    <!-- Spring MVC DispatcherServlet -->
     <servlet>
         <servlet-name>dispatcher</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>

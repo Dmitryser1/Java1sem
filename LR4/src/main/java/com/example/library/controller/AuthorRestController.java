@@ -1,6 +1,5 @@
 package com.example.library.controller;
 
-import com.example.library.model.Author;
 import com.example.library.model.AuthorDTO;
 import com.example.library.service.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +22,19 @@ public class AuthorRestController {
     @GetMapping("/{id}")
     public ResponseEntity<AuthorDTO> getAuthorById(@PathVariable Long id) {
         AuthorDTO author = authorService.getAuthorById(id);
-        return author != null 
-            ? ResponseEntity.ok(author) 
-             : ResponseEntity.notFound().build();
+        return author != null
+                ? ResponseEntity.ok(author)
+                : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public Author createAuthor(@RequestBody Author author) {
-        return authorService.createAuthor(author);
+    public AuthorDTO createAuthor(@RequestBody AuthorDTO authorDTO) {
+        return authorService.createAuthor(authorDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Author> updateAuthor(@PathVariable Long id, @RequestBody Author authorDetails) {
-        Author updatedAuthor = authorService.updateAuthor(id, authorDetails);
+    public ResponseEntity<AuthorDTO> updateAuthor(@PathVariable Long id, @RequestBody AuthorDTO authorDTO) {
+        AuthorDTO updatedAuthor = authorService.updateAuthor(id, authorDTO);
         return ResponseEntity.ok(updatedAuthor);
     }
 

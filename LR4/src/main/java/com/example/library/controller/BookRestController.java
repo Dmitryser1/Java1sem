@@ -1,6 +1,5 @@
 package com.example.library.controller;
 
-import com.example.library.model.Book;
 import com.example.library.model.BookDTO;
 import com.example.library.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,19 +22,19 @@ public class BookRestController {
     @GetMapping("/{id}")
     public ResponseEntity<BookDTO> getBookById(@PathVariable Long id) {
         BookDTO book = bookService.getBookById(id);
-        return book != null 
-            ? ResponseEntity.ok(book) 
-            : ResponseEntity.notFound().build();
+        return book != null
+                ? ResponseEntity.ok(book)
+                : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    public Book createBook(@RequestBody Book book) {
-        return bookService.createBook(book);
+    public BookDTO createBook(@RequestBody BookDTO bookDTO) {
+        return bookService.createBook(bookDTO);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Book> updateBook(@PathVariable Long id, @RequestBody Book bookDetails) {
-        Book updatedBook = bookService.updateBook(id, bookDetails);
+    public ResponseEntity<BookDTO> updateBook(@PathVariable Long id, @RequestBody BookDTO bookDTO) {
+        BookDTO updatedBook = bookService.updateBook(id, bookDTO);
         return ResponseEntity.ok(updatedBook);
     }
 
